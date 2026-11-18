@@ -1,0 +1,2 @@
+classifier_accuracy,viterbi_accuracy,classifier_continuity,viterbi_continuity,n_observations
+0.8777754386310821,0.9087064568133474,0.951274113371718,0.99446402020434,1916.0

@@ -31,14 +31,14 @@ FEATURES = ["dist_m", "proj_frac", "along_m", "arc_len_m", "dist_rank", "dist_ga
 
 
 # ------------------------------------------------------------------ IO and geometry
-def read_trip(trip_dir: Path):
+def read_trip(trip_dir: Path, include_route: bool = True):
     tid = trip_dir.name
     rd = lambda ext, **kw: pd.read_csv(trip_dir / f"{tid}.{ext}", sep=r"\s+", header=None, **kw)
     track = rd("track").to_numpy(float)
     nodes = rd("nodes").to_numpy(float)
     arcs = rd("arcs").to_numpy(int)
     rpath = trip_dir / f"{tid}.route"
-    route = rd("route").to_numpy(int).ravel() if rpath.exists() else None
+    route = rd("route").to_numpy(int).ravel() if include_route and rpath.exists() else None
     return track, nodes, arcs, route
 
 

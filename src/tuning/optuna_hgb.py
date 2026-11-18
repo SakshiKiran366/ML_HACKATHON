@@ -107,10 +107,15 @@ def main():
                      "test_macro_f1_top1": te["macro_f1_top1"], "test_macro_f1": te["macro_f1"],
                      "test_log_loss": te["log_loss"], "test_route_continuity": te["route_continuity"],
                      "fit_s": tf.seconds, "infer_us_per_row": 1e6 * ti.seconds / len(Xte)})
-        if label == "tuned":
-            import joblib
-            C.ARTIFACTS.mkdir(exist_ok=True)
-            joblib.dump({"model": m.m, "features": feats, "params": best}, C.ARTIFACTS / "hist_gb_tuned.joblib")
+    # Export the final tuned estimator refit on every permitted training row. The
+    # validation subset above determines rounds; it must not be discarded from fitting.
+    import joblib
+    final_rounds = max(1, int(round(study.best_trial.user_attrs["mean_best_round"])))
+    tuned_final = HistGradientBoostingClassifier(max_iter=final_rounds, early_stopping=False,
+                                                  random_state=C.SEED, **best).fit(X, y)
+    C.ARTIFACTS.mkdir(exist_ok=True)
+    joblib.dump({"model": tuned_final, "features": feats, "name": "hist_gb_tuned",
+                 "params": best, "max_iter": final_rounds}, C.ARTIFACTS / "hist_gb_tuned.joblib")
     cmp = pd.DataFrame(rows)
     cmp["search_trials"] = a.trials; cmp["search_seconds"] = t_search.seconds
     cmp.to_csv(out / "tuned_vs_untuned.csv", index=False)

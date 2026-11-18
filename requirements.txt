@@ -6,6 +6,7 @@ joblib
 optuna
 matplotlib>=3.8
 folium
+reportlab>=4.2
 pyarrow
 fastapi
 uvicorn
