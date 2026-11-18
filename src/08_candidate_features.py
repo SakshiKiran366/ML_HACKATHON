@@ -1,5 +1,9 @@
 """Build observation-by-candidate features for the map-matching models.
 
+WARNING (superseded, do not use for reported results): trip_rows() inserts the true route arc into the
+candidate set when it is missing (see the `candidate_misses` block), which leaks the label into
+candidate generation. Use src/features/pipeline.py instead. Details: docs/FEATURE_PIPELINES.md.
+
 The raw dataset stores one road graph and one GPS track per trip.  This
 script converts those files into a long CSV with one row per GPS observation
 and nearby directed arc.  Labels are derived from the route file for the

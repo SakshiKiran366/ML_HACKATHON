@@ -17,11 +17,13 @@ Ground-truth labels stay on Laptop 1 and never reach the model or the UI.
 
 ```
 dataset/            raw train + student_test trips (evaluator data is NOT in this repo)
-src/0*.py           dataset exploration scripts (inventory, validation, trajectories, network, routes, maps)
+src/0[1-7]*.py      dataset exploration scripts (inventory, validation, trajectories, network, routes, maps)
+src/08, src/09      SUPERSEDED (label leak), see docs/FEATURE_PIPELINES.md
 src/features/       pipeline.py (candidates, labels, features), build_table.py
 src/models/         common.py (harness + metrics), zoo.py (5 models), run_experiments.py
 src/tuning/         optuna_hgb.py (Bayesian optimisation)
 src/evaluation/     plots.py (comparison plots from recorded results)
+docs/               FEATURE_PIPELINES.md (canonical pipeline + leak finding), API_CONTRACT.md (backend <-> UI)
 src/hmm/            (planned) HMM + Viterbi
 frontend/           React + Vite + Leaflet evaluation UI
 tables/             candidate tables (parquet, one file per partition)
@@ -46,6 +48,7 @@ pip install -r requirements.txt
 python src/features/build_table.py
 python src/models/run_experiments.py
 python src/evaluation/plots.py
+python src/features/feature_importance.py     # leak-free permutation importance
 python src/tuning/optuna_hgb.py --trials 30
 ```
 

@@ -1,5 +1,9 @@
 """Feature selection and importance analysis for PathSnap candidate features.
 
+WARNING (superseded): this analysis reads the table from src/08_candidate_features.py, which leaks
+the label into candidate generation, so its importances and Top-1 numbers must not be reported.
+Valid replacement: src/features/feature_importance.py (see docs/FEATURE_PIPELINES.md).
+
 Performs:
 1. Missing-value audit & imputation analysis (specifically for prev_dist_m).
 2. Correlation analysis (Pearson and Spearman rank correlation with label).
