@@ -8,6 +8,7 @@ optuna
 matplotlib>=3.8
 networkx
 folium
+reportlab>=4.2
 pyarrow
 fastapi
 uvicorn

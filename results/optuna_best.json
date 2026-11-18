@@ -1,0 +1,15 @@
+{
+  "best_params": {
+    "max_depth": 7,
+    "learning_rate": 0.037565862861181167,
+    "max_leaf_nodes": 92,
+    "min_samples_leaf": 36,
+    "l2_regularization": 0.0035186816415472676,
+    "max_features": 0.7475884550556351
+  },
+  "best_cv_top1": 0.8547836401472655,
+  "n_trials": 10,
+  "sampler": "TPE",
+  "seed": 42,
+  "search_seconds": 945.9741127919988
+}

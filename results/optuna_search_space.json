@@ -1,0 +1,9 @@
+{
+  "learning_rate": "log-uniform [0.03, 0.3]",
+  "max_leaf_nodes": "int [15, 127]",
+  "max_depth": "int [4, 16] or None",
+  "min_samples_leaf": "log-int [10, 200]",
+  "l2_regularization": "log-uniform [1e-3, 30]",
+  "max_features": "uniform [0.5, 1.0]",
+  "max_iter": "fixed 300, best round chosen on held-out trips"
+}

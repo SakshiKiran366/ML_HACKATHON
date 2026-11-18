@@ -20,11 +20,12 @@ dataset/            raw train + student_test trips (evaluator data is NOT in thi
 src/0[1-7]*.py      dataset exploration scripts (inventory, validation, trajectories, network, routes, maps)
 src/08, src/09      SUPERSEDED (label leak), see docs/FEATURE_PIPELINES.md
 src/features/       pipeline.py (candidates, labels, features), build_table.py
-src/models/         common.py (harness + metrics), zoo.py (5 models), run_experiments.py
+src/models/         common.py (harness + metrics), algorithms/ (one model per file), zoo.py registry
 src/tuning/         optuna_hgb.py (Bayesian optimisation)
-src/evaluation/     plots.py (comparison plots from recorded results)
+src/evaluation/     plots, decoder comparison, and Folium prediction maps
 docs/               FEATURE_PIPELINES.md (canonical pipeline + leak finding), API_CONTRACT.md (backend <-> UI)
-src/hmm/            (planned) HMM + Viterbi
+src/hmm/            Viterbi sequence decoder
+api/                FastAPI service for trip data and route reconstruction
 frontend/           React + Vite + Leaflet evaluation UI
 tables/             candidate tables (parquet, one file per partition)
 results/            experiment logs/CSVs, candidate diagnostics, figures
@@ -35,7 +36,45 @@ output/             exploration reports (teammates' EDA outputs)
 ## Frontend
 
 The browser application lives in [`frontend/`](frontend/). See [`frontend/README.md`](frontend/README.md)
-for installation, API configuration, the provisional FastAPI contract, and deployment instructions.
+for installation, API configuration, and deployment instructions.
+
+## Backend laptop deployment
+
+The API serves the ten `student_test` trips and never returns their reference `.route` files. Start it
+from the repository root after installing `requirements.txt`:
+
+```bash
+python src/features/build_table.py
+python src/models/run_experiments.py
+python src/tuning/optuna_hgb.py --trials 10 --folds 5
+python src/models/export_tuned_model.py --out artifacts/final_model.joblib
+python src/evaluation/evaluate_decoder.py
+python src/evaluation/prediction_map.py --trip 00000000
+python src/evaluation/build_technical_report.py
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+The selected artifact is `artifacts/final_model.joblib`. HistGradientBoosting had the best initial
+grouped-CV Top-1 and log loss. A ten-trial TPE search improved CV Top-1 from 0.8538 to 0.8549,
+student-test Top-1 from 0.8574 to 0.8586, and student-test log loss from 0.0721 to 0.0690, so the
+tuned model was refit on all 80 training trips and selected for serving. Student-test data was used
+only for development comparison. The API works without an artifact using nearest-road distance
+scores, clearly indicated by `/health`'s `model_loaded: false`; this fallback is for integration
+checks and is not a trained prediction.
+On the UI laptop, set the API base URL to `http://<backend-laptop-LAN-IP>:8000` in API settings.
+Keep both laptops on a reachable network and allow inbound TCP port 8000 on the backend laptop.
+
+For development, the API defaults to `dataset/student_test`. At the event, point it to the
+organizer-provided evaluator trip directory on the backend laptop (if supplied separately) with
+`PATHSNAP_TRIPS_DIR=/absolute/path/to/evaluator_trips`. The server reads each trip's reference route
+only after predicting, to calculate the returned evaluation metrics; route labels are never passed
+to candidate generation or the model and are never returned to the UI. Never copy evaluator files
+into the training tables or commit them.
+
+The Viterbi decoder selects one candidate state per observation using classifier emission scores,
+directed road connectivity, projected distance along each segment, observed travel distance and GPS
+gap length. Development comparison is reproducible with
+`python src/evaluation/evaluate_decoder.py`; it writes per-trip and mean metrics to `results/`.
 
 ## Pipeline
 
