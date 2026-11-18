@@ -1,6 +1,17 @@
+﻿__pycache__/
+*.pyc
+*.pyo
+*.pyd
 .venv/
-__pycache__/
-*.py[cod]
+.ipynb_checkpoints/
+.vscode/
+# evaluator data and labels must NEVER be committed
+data/evaluator*/
+data/**/evaluator*/
+# large intermediate candidate tables
+data/candidates*
+artifacts/candidates/
+*SYNTHETIC*
+.env
 dataset/
 output/
-.vscode/

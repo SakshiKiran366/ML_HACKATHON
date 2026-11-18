@@ -1,4 +1,11 @@
 numpy>=1.26
 pandas>=2.1
+scikit-learn
+xgboost
+torch
+optuna
 matplotlib>=3.8
+networkx
 folium
+fastapi
+uvicorn
