@@ -22,12 +22,16 @@ SEED = 42
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "results"
 ARTIFACTS = ROOT / "artifacts"
+TABLES = ROOT / "tables"
 
 
 # --------------------------------------------------------------------------- data
 def load_table(path: str | Path) -> pd.DataFrame:
     path = Path(path)
-    df = pd.read_csv(path) if path.suffix in (".csv", ".gz") else pd.read_parquet(path)
+    if path.is_dir():  # tables/candidates_train.parquet + candidates_student_test.parquet
+        df = pd.concat([pd.read_parquet(f) for f in sorted(path.glob("candidates_*.parquet"))], ignore_index=True)
+    else:
+        df = pd.read_csv(path) if path.suffix in (".csv", ".gz") else pd.read_parquet(path)
     missing = [c for c in META_COLS if c not in df.columns]
     if missing:
         raise ValueError(f"table missing required columns: {missing}")
@@ -39,42 +43,6 @@ def load_table(path: str | Path) -> pd.DataFrame:
 
 def feature_columns(df: pd.DataFrame) -> list[str]:
     return [c for c in df.columns if c not in META_COLS]
-
-
-def make_synthetic(n_train=80, n_test=10, k=8, seed=SEED) -> pd.DataFrame:
-    """SYNTHETIC stand-in table, only to exercise the harness. Never report its numbers."""
-    rng = np.random.default_rng(seed)
-    rows = []
-    trip_ids = list(range(n_train + n_test))
-    for t in trip_ids:
-        n_obs = int(rng.integers(150, 700))
-        arc_cur = 0.0
-        for o in range(n_obs):
-            arc_cur += rng.uniform(0.0, 0.12)
-            true_arc = int(arc_cur)
-            miss = rng.random() < 0.04
-            cands = {true_arc + d for d in (-2, -1, 1, 2, 3)} - {true_arc}
-            cands = [c for c in cands if c >= 0]
-            while len(cands) < k - 1:
-                cands.append(int(rng.integers(0, true_arc + 10)))
-            cands = list(dict.fromkeys(cands))[: k - 1]
-            if not miss:
-                cands.append(true_arc)
-            for a in cands:
-                is_true = a == true_arc and not miss
-                dist = abs(rng.normal(6 if is_true else 25, 8 if is_true else 18))
-                rows.append((t, o, a, a, a + 1, int(is_true),
-                             "train" if t < n_train else "student_test",
-                             dist, abs(rng.normal(12 if is_true else 60, 25)),
-                             rng.normal(0 if is_true else 0.6, 0.5),
-                             rng.uniform(5, 60), rng.uniform(40, 300), rng.uniform(0, 1),
-                             dist + rng.normal(0, 5), float(rng.random() < (0.9 if is_true else 0.3))))
-    cols = META_COLS + ["dist_m", "heading_diff_deg", "heading_score", "speed_mps",
-                        "arc_len_m", "proj_frac", "prev_dist_m", "connected_prev"]
-    df = pd.DataFrame(rows, columns=cols)
-    df["dist_rank"] = df.groupby(["trip_id", "obs_idx"])["dist_m"].rank(method="first")
-    df["dist_gap"] = df["dist_m"] - df.groupby(["trip_id", "obs_idx"])["dist_m"].transform("min")
-    return df
 
 
 # ------------------------------------------------------------------------ splits

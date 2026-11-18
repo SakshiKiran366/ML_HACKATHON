@@ -1,7 +1,6 @@
 """Train + compare the five models with trip-grouped CV and student-test evaluation.
 
-    python src/models/run_experiments.py --table data/candidates.parquet
-    python src/models/run_experiments.py --synthetic        # harness smoke test ONLY
+    python src/models/run_experiments.py            # reads tables/candidates_*.parquet
 
 Selection data: 80 training trips (grouped CV). Student-test trips: development comparison only.
 Evaluator data is never loaded.
@@ -22,18 +21,13 @@ from zoo import registry
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--table")
-    ap.add_argument("--synthetic", action="store_true")
-    ap.add_argument("--models", default="logreg,knn,random_forest,xgboost,mlp")
+    ap.add_argument("--table", default=str(C.TABLES))
+    ap.add_argument("--models", default="logreg,knn,decision_tree,random_forest,hist_gb")
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--out", default=str(C.RESULTS))
     args = ap.parse_args()
 
-    if args.synthetic:
-        print("!" * 70, "\n!! SYNTHETIC DATA: harness test only. Do NOT report these numbers.\n" + "!" * 70)
-        df, tag = C.make_synthetic(), "SYNTHETIC"
-    else:
-        df, tag = C.load_table(args.table), "REAL"
+    df, tag = C.load_table(args.table), "REAL"
     feats = C.feature_columns(df)
     train = df[df.partition == "train"].reset_index(drop=True)
     test = df[df.partition == "student_test"].reset_index(drop=True)
