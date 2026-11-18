@@ -1,0 +1,12 @@
+﻿__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+# evaluator data and labels must NEVER be committed
+data/evaluator*/
+data/**/evaluator*/
+# large intermediate candidate tables
+data/candidates*
+artifacts/candidates/
+*SYNTHETIC*
+.env
