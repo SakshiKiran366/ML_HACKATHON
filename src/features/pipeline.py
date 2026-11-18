@@ -172,7 +172,7 @@ def align_labels(P, T, A, B, route, head_w=15.0, c1=2.0, c2=12.0, c3=30.0, gap_c
 
 
 # ------------------------------------------------------------------ main entry
-def build_trip(track, nodes, arcs, route=None, trip_id=0, partition="train", R=R_M, K=K_MAX):
+def build_trip(track, nodes, arcs, route=None, trip_id=0, partition="train", R=R_M, K=K_MAX, return_geom=False):
     track, n_dropped = clean_track(track)
     lon0, lat0 = track[:, 0].mean(), track[:, 1].mean()
     P = project(track[:, :2], lon0, lat0)
@@ -234,4 +234,6 @@ def build_trip(track, nodes, arcs, route=None, trip_id=0, partition="train", R=R
     for k in FEATURES:
         df[k] = np.asarray(feats[k], np.float32)
     df = df[keep_obs[pt]].reset_index(drop=True)
+    if return_geom:  # observation-level geometry for the HMM decoder (label-free)
+        stats["geom"] = {"P": P, "T": T, "arcs": arcs, "A": A, "B": B, "L": L}
     return df, stats

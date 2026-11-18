@@ -1,12 +1,10 @@
-numpy>=1.26
+﻿numpy>=1.26
 pandas>=2.1
 scipy
-scikit-learn
-xgboost
-torch
+scikit-learn>=1.4
+joblib
 optuna
 matplotlib>=3.8
-networkx
 folium
 pyarrow
 fastapi

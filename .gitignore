@@ -15,3 +15,8 @@ artifacts/candidates/
 .env
 dataset/
 output/
+
+# evaluator package must never be committed (any location)
+evaluator*/
+*.zip
+results/maps/*.png
