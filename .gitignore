@@ -20,3 +20,6 @@ output/
 evaluator*/
 *.zip
 results/maps/*.png
+
+# subset smoke-test outputs
+results/*_quick*
