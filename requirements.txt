@@ -1,11 +1,13 @@
-﻿numpy
-pandas
+﻿numpy>=1.26
+pandas>=2.1
+scipy
 scikit-learn
 xgboost
 torch
 optuna
-matplotlib
-networkx
+matplotlib>=3.8
 folium
+networkx
+pyarrow
 fastapi
 uvicorn
