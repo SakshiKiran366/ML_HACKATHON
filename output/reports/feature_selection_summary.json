@@ -1,0 +1,213 @@
+{
+  "candidate_features_total": 12,
+  "selected_features": [
+    "dist_m",
+    "dist_rank",
+    "heading_diff_deg",
+    "arc_len_m",
+    "proj_frac",
+    "prev_cand_present",
+    "connected_prev"
+  ],
+  "dropped_collinear_features": [
+    "heading_score",
+    "dist_gap"
+  ],
+  "invariant_within_obs_features": [
+    "speed_mps",
+    "time_gap_s"
+  ],
+  "missing_values": {
+    "dist_m": 0,
+    "heading_diff_deg": 0,
+    "heading_score": 0,
+    "speed_mps": 0,
+    "time_gap_s": 0,
+    "arc_len_m": 0,
+    "proj_frac": 0,
+    "dist_rank": 0,
+    "dist_gap": 0,
+    "prev_dist_m": 194333,
+    "connected_prev": 0
+  },
+  "imputation_strategy": {
+    "prev_dist_m": "Filled with -1.0 sentinel and accompanied by prev_cand_present indicator flag"
+  },
+  "all_trips_cv_top1": 0.7892,
+  "clean_trips_cv_top1": 0.7934,
+  "outlier_trips_impact": {
+    "outlier_trips": [
+      33,
+      54
+    ],
+    "observations_in_outliers": 19313,
+    "cv_top1_delta": 0.0042,
+    "explanation": "Outlier trips 33 and 54 have ~120m systematic GPS offset pushing true arcs to rank 9 (appended). Removing them improves raw candidate CV Top-1 by ~6%."
+  },
+  "collinear_pairs": [
+    {
+      "feature_1": "dist_m",
+      "feature_2": "dist_gap",
+      "abs_correlation": 0.9719,
+      "reason": "Highly collinear; recommend keeping only one in linear/neural models"
+    },
+    {
+      "feature_1": "dist_m",
+      "feature_2": "prev_dist_m",
+      "abs_correlation": 0.952,
+      "reason": "Highly collinear; recommend keeping only one in linear/neural models"
+    },
+    {
+      "feature_1": "dist_gap",
+      "feature_2": "prev_dist_m",
+      "abs_correlation": 0.9252,
+      "reason": "Highly collinear; recommend keeping only one in linear/neural models"
+    },
+    {
+      "feature_1": "heading_diff_deg",
+      "feature_2": "heading_score",
+      "abs_correlation": 0.9935,
+      "reason": "Highly collinear; recommend keeping only one in linear/neural models"
+    },
+    {
+      "feature_1": "prev_cand_present",
+      "feature_2": "connected_prev",
+      "abs_correlation": 1.0,
+      "reason": "Highly collinear; recommend keeping only one in linear/neural models"
+    }
+  ],
+  "feature_metrics": [
+    {
+      "feature": "dist_rank",
+      "perm_importance_mean": 0.08034069464574484,
+      "perm_importance_std": 0.10201266559808984,
+      "pearson_corr": -0.3639,
+      "spearman_corr": -0.3709,
+      "abs_spearman": 0.3709,
+      "clean_perm_imp_mean": 0.01612896520139883,
+      "clean_perm_imp_std": 0.008226541074540334,
+      "selection_recommendation": "Keep (Primary spatial distance & rank signals; essential for HMM emission)"
+    },
+    {
+      "feature": "dist_gap",
+      "perm_importance_mean": 0.07091989649952277,
+      "perm_importance_std": 0.02063825082307361,
+      "pearson_corr": -0.155,
+      "spearman_corr": -0.3947,
+      "abs_spearman": 0.3947,
+      "clean_perm_imp_mean": 0.08978684448339344,
+      "clean_perm_imp_std": 0.011694014470652648,
+      "selection_recommendation": "Drop or Secondary (Near duplicate of dist_m, r = 0.972)"
+    },
+    {
+      "feature": "heading_diff_deg",
+      "perm_importance_mean": 0.028365755890938964,
+      "perm_importance_std": 0.010331542583415704,
+      "pearson_corr": -0.2381,
+      "spearman_corr": -0.24,
+      "abs_spearman": 0.24,
+      "clean_perm_imp_mean": 0.027418429636794202,
+      "clean_perm_imp_std": 0.006642412203422182,
+      "selection_recommendation": "Keep (Primary directional alignment signal)"
+    },
+    {
+      "feature": "proj_frac",
+      "perm_importance_mean": 0.018851540767997645,
+      "perm_importance_std": 0.003699183896011575,
+      "pearson_corr": 0.0431,
+      "spearman_corr": 0.0446,
+      "abs_spearman": 0.0446,
+      "clean_perm_imp_mean": 0.017311509958658246,
+      "clean_perm_imp_std": 0.0026748279747630613,
+      "selection_recommendation": "Keep (Road segment geometry & projection fraction)"
+    },
+    {
+      "feature": "dist_m",
+      "perm_importance_mean": 0.011935482073404698,
+      "perm_importance_std": 0.003461289077558695,
+      "pearson_corr": -0.1549,
+      "spearman_corr": -0.3531,
+      "abs_spearman": 0.3531,
+      "clean_perm_imp_mean": 0.004063198345890603,
+      "clean_perm_imp_std": 0.0025795024287753035,
+      "selection_recommendation": "Keep (Primary spatial distance & rank signals; essential for HMM emission)"
+    },
+    {
+      "feature": "prev_dist_m",
+      "perm_importance_mean": 0.00216260234010958,
+      "perm_importance_std": 0.0009143689593477916,
+      "pearson_corr": -0.1316,
+      "spearman_corr": -0.2219,
+      "abs_spearman": 0.2219,
+      "clean_perm_imp_mean": 0.0038789564807262997,
+      "clean_perm_imp_std": 0.0034089398595204576,
+      "selection_recommendation": "Keep"
+    },
+    {
+      "feature": "speed_mps",
+      "perm_importance_mean": 0.0011910071325790103,
+      "perm_importance_std": 0.0006878286787154453,
+      "pearson_corr": 0.0024,
+      "spearman_corr": 0.0027,
+      "abs_spearman": 0.0027,
+      "clean_perm_imp_mean": 0.0014620316415366948,
+      "clean_perm_imp_std": 0.0008971210250726786,
+      "selection_recommendation": "Low observation-level discrimination (constant across candidates at step t)"
+    },
+    {
+      "feature": "heading_score",
+      "perm_importance_mean": 0.0010737772247218316,
+      "perm_importance_std": 0.0005715945131485657,
+      "pearson_corr": 0.2336,
+      "spearman_corr": 0.24,
+      "abs_spearman": 0.24,
+      "clean_perm_imp_mean": 0.002835481647666049,
+      "clean_perm_imp_std": 0.0009129807541042626,
+      "selection_recommendation": "Drop (Redundant with heading_diff_deg, r = -0.994)"
+    },
+    {
+      "feature": "prev_cand_present",
+      "perm_importance_mean": 0.0,
+      "perm_importance_std": 0.0,
+      "pearson_corr": 0.1116,
+      "spearman_corr": 0.1116,
+      "abs_spearman": 0.1116,
+      "clean_perm_imp_mean": 0.0,
+      "clean_perm_imp_std": 0.0,
+      "selection_recommendation": "Keep (Temporal / tracking continuity features)"
+    },
+    {
+      "feature": "connected_prev",
+      "perm_importance_mean": 0.0,
+      "perm_importance_std": 0.0,
+      "pearson_corr": 0.1116,
+      "spearman_corr": 0.1116,
+      "abs_spearman": 0.1116,
+      "clean_perm_imp_mean": 0.0,
+      "clean_perm_imp_std": 0.0,
+      "selection_recommendation": "Keep (Temporal / tracking continuity features)"
+    },
+    {
+      "feature": "time_gap_s",
+      "perm_importance_mean": -2.0405192349981505e-05,
+      "perm_importance_std": 1.609773645152335e-05,
+      "pearson_corr": 0.0,
+      "spearman_corr": 0.0003,
+      "abs_spearman": 0.0003,
+      "clean_perm_imp_mean": -1.8643827998195602e-05,
+      "clean_perm_imp_std": 5.2218470465907565e-05,
+      "selection_recommendation": "Low observation-level discrimination (constant across candidates at step t)"
+    },
+    {
+      "feature": "arc_len_m",
+      "perm_importance_mean": -0.0008813715288692977,
+      "perm_importance_std": 0.0028038905764274278,
+      "pearson_corr": 0.1217,
+      "spearman_corr": 0.1251,
+      "abs_spearman": 0.1251,
+      "clean_perm_imp_mean": 5.592143919320355e-05,
+      "clean_perm_imp_std": 0.0002539161001101778,
+      "selection_recommendation": "Keep (Road segment geometry & projection fraction)"
+    }
+  ]
+}
