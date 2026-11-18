@@ -1,7 +1,7 @@
 """Comparison plots built ONLY from recorded results (never fabricated).
 
     python src/evaluation/plots.py [--results results] [--figs results/figures]
-Loss curves are drawn only for models that have a real training history (XGBoost, MLP).
+Loss curves are drawn only for models that have a real training history (boosting).
 """
 import argparse
 import json
@@ -77,7 +77,7 @@ def main():
         ax.plot(h["train_loss"], label="train loss")
         if h.get("val_loss"):
             ax.plot(h["val_loss"], label="validation loss (held-out trips)")
-        ax.set_xlabel("round" if name == "xgboost" else "epoch"); ax.set_ylabel("log loss")
+        ax.set_xlabel("round" if name == "hist_gb" else "epoch"); ax.set_ylabel("log loss")
         ax.set_title(f"{name} training history {sup}"); ax.legend()
         fig.tight_layout(); fig.savefig(figs / f"loss_curve_{name}.png", dpi=150); plt.close(fig)
     print("figures written to", figs)

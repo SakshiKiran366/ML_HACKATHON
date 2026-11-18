@@ -1,0 +1,42 @@
+{
+  "time": "2026-11-18T13:10:48",
+  "data": "REAL",
+  "seed": 42,
+  "features": [
+    "dist_m",
+    "proj_frac",
+    "along_m",
+    "arc_len_m",
+    "dist_rank",
+    "dist_gap",
+    "dist_ratio",
+    "n_cands",
+    "min_dist_m",
+    "speed_mps",
+    "heading_valid",
+    "cos_heading",
+    "abs_heading_deg",
+    "dt_prev_s",
+    "dt_next_s",
+    "d_prev1",
+    "d_next1",
+    "d_prev3",
+    "d_next3",
+    "same_prev_best",
+    "adj_prev_best",
+    "same_next_best",
+    "adj_next_best",
+    "out_deg_to",
+    "in_deg_from"
+  ],
+  "folds": 5,
+  "python": "3.14.3",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "models": [
+    "logreg",
+    "knn",
+    "decision_tree",
+    "random_forest",
+    "hist_gb"
+  ]
+}
