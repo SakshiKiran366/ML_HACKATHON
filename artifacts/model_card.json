@@ -1,0 +1,94 @@
+{
+  "model": "HistGradientBoostingClassifier",
+  "task": "P(candidate arc is the reference arc | GPS obs)",
+  "features": [
+    "dist_m",
+    "proj_frac",
+    "along_m",
+    "arc_len_m",
+    "dist_rank",
+    "dist_gap",
+    "dist_ratio",
+    "n_cands",
+    "min_dist_m",
+    "speed_mps",
+    "heading_valid",
+    "cos_heading",
+    "abs_heading_deg",
+    "dt_prev_s",
+    "dt_next_s",
+    "d_prev1",
+    "d_next1",
+    "d_prev3",
+    "d_next3",
+    "same_prev_best",
+    "adj_prev_best",
+    "same_next_best",
+    "adj_next_best",
+    "out_deg_to",
+    "in_deg_from"
+  ],
+  "hyperparameters": {
+    "max_depth": 7,
+    "learning_rate": 0.037565862861181167,
+    "max_leaf_nodes": 92,
+    "min_samples_leaf": 36,
+    "l2_regularization": 0.0035186816415472676,
+    "max_features": 0.7475884550556351
+  },
+  "tuning": {
+    "method": "Optuna TPE",
+    "trials": 10,
+    "objective": "grouped-CV Top-1 accuracy on 80 train trips",
+    "best_cv_top1": 0.8547836401472655
+  },
+  "selected_because": "best CV Top-1 and log loss among five models (results/experiments_summary.csv)",
+  "model_comparison": [
+    {
+      "model": "logreg",
+      "cv_top1_mean": 0.8425,
+      "test_top1": 0.8404,
+      "test_log_loss": 0.1817
+    },
+    {
+      "model": "knn",
+      "cv_top1_mean": 0.8301,
+      "test_top1": 0.8291,
+      "test_log_loss": 0.1189
+    },
+    {
+      "model": "decision_tree",
+      "cv_top1_mean": 0.8435,
+      "test_top1": 0.8509,
+      "test_log_loss": 0.1466
+    },
+    {
+      "model": "random_forest",
+      "cv_top1_mean": 0.8519,
+      "test_top1": 0.8615,
+      "test_log_loss": 0.0788
+    },
+    {
+      "model": "hist_gb",
+      "cv_top1_mean": 0.8539,
+      "test_top1": 0.8582,
+      "test_log_loss": 0.0711
+    }
+  ],
+  "tuned_vs_untuned": [
+    {
+      "model": "hist_gb_untuned",
+      "cv_top1_mean": 0.8538,
+      "test_top1": 0.8574,
+      "test_log_loss": 0.0721
+    },
+    {
+      "model": "hist_gb_tuned",
+      "cv_top1_mean": 0.8549,
+      "test_top1": 0.8586,
+      "test_log_loss": 0.069
+    }
+  ],
+  "decoder": "HMM/Viterbi, see src/hmm/hmm.py",
+  "evaluator_data_used": false
+}

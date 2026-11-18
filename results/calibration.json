@@ -1,0 +1,13 @@
+{
+  "uncalibrated": {
+    "log_loss": 0.06904446161422735,
+    "brier": 0.020190057937363105,
+    "ece": 0.005400008086645121
+  },
+  "isotonic": {
+    "log_loss": 0.06890909385538523,
+    "brier": 0.020105723353603618,
+    "ece": 0.004989860731982839
+  },
+  "decision": "keep uncalibrated (already well calibrated; isotonic gain is immaterial)"
+}

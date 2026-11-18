@@ -1,0 +1,14 @@
+{
+  "params": {
+    "alpha": 0.6770975446192241,
+    "beta": 14.940472350378293,
+    "p_unreach": 19.699361954324445,
+    "p_back": 1.7020754584148976,
+    "p_uturn": 17.398885899911978
+  },
+  "gap_s": 5.0,
+  "reach_m": 600.0,
+  "back_tol_m": 8.0,
+  "tuned_on": "train out-of-fold probabilities",
+  "seed": 42
+}

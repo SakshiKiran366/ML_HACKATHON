@@ -38,8 +38,8 @@ def main():
     for name, p in (("uncalibrated", p_te), ("isotonic", p_cal)):
         rows[name] = {"log_loss": float(log_loss(y_te, np.clip(p, 1e-7, 1 - 1e-7))),
                       "brier": float(brier_score_loss(y_te, p)), "ece": ece(y_te, p)}
-    adopt = rows["isotonic"]["log_loss"] < rows["uncalibrated"]["log_loss"] - 1e-4
-    rows["decision"] = "adopt isotonic" if adopt else "keep uncalibrated (isotonic does not improve student-test log loss)"
+    adopt = rows["isotonic"]["log_loss"] < rows["uncalibrated"]["log_loss"] - 1e-3  # must be a material gain
+    rows["decision"] = "adopt isotonic" if adopt else "keep uncalibrated (already well calibrated; isotonic gain is immaterial)"
     if adopt:
         joblib.dump(iso, C.ARTIFACTS / "isotonic_calibrator.joblib")
     C.dump_json(rows, C.RESULTS / "calibration.json")

@@ -23,7 +23,7 @@ src/features/       pipeline.py (candidates, labels, features), build_table.py
 src/models/         common.py (harness + metrics), algorithms/ (one model per file), zoo.py registry
 src/tuning/         optuna_hgb.py (Bayesian optimisation)
 src/evaluation/     plots, decoder comparison, and Folium prediction maps
-docs/               FEATURE_PIPELINES.md (canonical pipeline + leak finding), API_CONTRACT.md (backend <-> UI)
+docs/               RESULTS.md (all results + limitations), FEATURE_PIPELINES.md (canonical pipeline + leak finding), API_CONTRACT.md (backend <-> UI)
 src/hmm/            Viterbi sequence decoder
 api/                FastAPI service for trip data and route reconstruction
 frontend/           React + Vite + Leaflet evaluation UI

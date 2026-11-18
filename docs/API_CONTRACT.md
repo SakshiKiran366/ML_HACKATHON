@@ -1,5 +1,8 @@
 # PathSnap API contract (Laptop 1 backend <-> Laptop 2 frontend)
 
+Status: implemented in `api/main.py` (FastAPI, CORS open for development). Also exposes `GET /model` (loaded model name/config).
+Run: `uvicorn api.main:app --host 0.0.0.0 --port 8000`. Metric keys actually returned by `/reconstruct`: `accuracy`, `classifier_accuracy`, `route_continuity` (percentages), `matched_observations`, `candidate_count`, `processing_time_ms`.
+
 The backend runs on **Laptop 1** (FastAPI). The frontend (`frontend/`) runs on Laptop 2 and sets
 `VITE_API_BASE_URL=http://<laptop-1-LAN-IP>:8000` (or via the in-app API settings).
 Field names below match what `frontend/src/services/api.ts` already accepts. All coordinates are
@@ -13,10 +16,9 @@ Field names below match what `frontend/src/services/api.ts` already accepts. All
 ## Server configuration (environment variables)
 | Variable | Meaning | Default |
 |---|---|---|
-| `PATHSNAP_TRIP_DIR` | folder with trip folders `<id>/<id>.{track,nodes,arcs,route}` | `dataset/student_test` (development) |
-| `PATHSNAP_CORS_ORIGINS` | allowed frontend origins, comma separated | `*` for development |
+| `PATHSNAP_TRIPS_DIR` | folder with trip folders `<id>/<id>.{track,nodes,arcs,route}` | `dataset/student_test` (development) |
 
-At evaluation time `PATHSNAP_TRIP_DIR` is pointed at the folder holding the ten evaluator trips
+At evaluation time `PATHSNAP_TRIPS_DIR` is pointed at the folder holding the ten evaluator trips
 (kept out of git: `.gitignore` excludes `dataset/evaluator*/`). The trip list is read from that folder,
 so no ids are hardcoded. The folder must contain each trip's `.route` file for server-side scoring.
 

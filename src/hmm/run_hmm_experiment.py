@@ -25,6 +25,7 @@ for sub in ("models", "features", "hmm"):
 import common as C
 import hmm as H
 import pipeline as P
+from viterbi import decode as simple_decode  # teammate's connectivity-only Viterbi
 from zoo import HGBModel
 
 PROC = ROOT / "output" / "processed"
@@ -67,7 +68,7 @@ def build_trellis(partition, tid, rows, prob):
     g = H.TripGraph(arcs, np.linalg.norm(B - A, axis=1))
     tr = H.trellis_from_table(g, Pm, T, rows, prob)
     truth = rows[rows.label == 1].drop_duplicates("obs_idx").set_index("obs_idx").arc_id
-    return tid, g, tr, truth
+    return tid, g, tr, truth, rows, np.asarray(prob)
 
 
 def make_trellises(df, probs, partition, n_jobs=6):
@@ -80,9 +81,11 @@ def make_trellises(df, probs, partition, n_jobs=6):
 def score(trellises, params=None):
     """params None -> classifier-only. Returns aggregate + per-trip metrics."""
     hit = tot = 0; strict = []; reach = []; rp = []; rr = []; per_trip = []
-    for tid, g, tr, truth in trellises:
+    for tid, g, tr, truth, rows, prob in trellises:
         if params is None:
             chosen = np.array(tr.classifier_only())
+        elif params == "simple":  # teammate decoder: hand-set constants, not tuned
+            chosen = rows.arc_id.to_numpy()[simple_decode(rows, prob)]
         else:
             _, chosen = tr.decode(**params); chosen = np.array(chosen)
         if len(chosen) == 0:
@@ -120,9 +123,10 @@ def main():
     print("1/4 out-of-fold probabilities on train trips"); p_oof = oof_probs(train, feats, params, a.quick)
     print("2/4 final classifier -> student-test probabilities")
     X, y, trips = train[feats].to_numpy(np.float32), train.label.to_numpy(), train.trip_id.to_numpy()
-    sub, val = C.inner_val_split(trips)
-    model = HGBModel(**params).fit(X[sub], y[sub], X[val], y[val])
-    p_te = model.predict_proba(test[feats].to_numpy(np.float32))
+    import joblib
+    shipped = joblib.load(ROOT / "artifacts" / "hist_gb_tuned.joblib")  # the model the API serves (train rows only)
+    assert shipped["features"] == feats, "feature mismatch between table and shipped model"
+    p_te = shipped["model"].predict_proba(test[feats].to_numpy(np.float32))[:, 1]
     print("3/4 building HMM trellises"); tr_tr = make_trellises(train, p_oof, "train"); tr_te = make_trellises(test, p_te, "student_test")
     print(f"    built in {time.time() - t0:.0f}s")
     base_tr, _ = score(tr_tr); base_te, base_pt = score(tr_te)
@@ -140,7 +144,9 @@ def main():
     best = {k: float(v) for k, v in study.best_params.items()}
     default_tr, _ = score(tr_tr, H.DEFAULT_PARAMS); best_tr, _ = score(tr_tr, best)
     default_te, _ = score(tr_te, H.DEFAULT_PARAMS); best_te, hmm_pt = score(tr_te, best)
+    simple_tr, _ = score(tr_tr, "simple"); simple_te, _ = score(tr_te, "simple")
     rows = [("classifier_only", "train_oof", base_tr), ("classifier_only", "student_test", base_te),
+            ("viterbi_simple_teammate", "train_oof", simple_tr), ("viterbi_simple_teammate", "student_test", simple_te),
             ("hmm_default_params", "train_oof", default_tr), ("hmm_default_params", "student_test", default_te),
             ("hmm_tuned_params", "train_oof", best_tr), ("hmm_tuned_params", "student_test", best_te)]
     res = pd.DataFrame([{"method": m, "partition": p, **v} for m, p, v in rows])
